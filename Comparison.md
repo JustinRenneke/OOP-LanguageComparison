@@ -401,7 +401,7 @@
 	```
 	String.Compare(string1, string2);
 	```
-	It's also worth noting that strings are interned in C# just as they are in Python - trying to compare two different copies of the same string will return the same reference value.
+	It's also worth noting that strings are interned in C# just as they are in Python - trying to compare two different copies of the same string with ReferenceEquals() will return the same reference value.
 * ## Null/nil references
 	### Python
 	Python uses 'None' for null/nil values. The only notable thing about handling null references in Python is that, since 'None' is actually an instantiated singleton object in Python, you can compare values to None in two ways:
@@ -429,26 +429,167 @@
 	This new '?.' syntactic sugar allows for more efficient null checking before accessing properties or methods.
 * ## Errors and exception handling
 	### Python
-
+	Python has an error and exception handling system based on try...except statements. A program may 'try' to execute a block of code, but if it fails for some reason, it can raise an exception which can be caught in an 'except' block. Exceptions can be raised upward through the call chain to be handled at higher levels of the program using the 'raise' functionality. All exceptions are classes derived from the Exception class and you can define your own subclasses of Exception. There is also an optional 'else' clause that can be added to the end of try...except statements that can be used for code that must be executed if the try clause does not raise an exception. In addition, Python offers the 'finally' clause to excecute code no matter what. Example of the system:
+	```
+	try:
+	   	#You try to do your operations here
+	except ExceptionI:
+	   	#If there is ExceptionI, then execute this block.
+	except ExceptionII:
+	   	#If there is ExceptionII, then execute this block.
+	else:
+	   	#If there is no exception then execute this block.
+	finally:
+		#Execute this code whether an exception occured or not
+	```
+	In addition, Python uses 'assertions' to allow programmers to verify the validity of input and output. Example:
+	```
+	assert (number >= 0),"Negative number!"
+	```
+	In this example, if number is negative, the string will be printed and an AssertionError will be raised.
+	If exceptions are not handled, the program terminates.
 	### C#
+	C# exception handling is based on try/catch blocks and offer the ability to execute code whether or not an exception was raised using the 'finally' clause. Example:
+	```
+	try
+	{
+	   // statements causing exception
+	}
+	catch( ExceptionName e1 )
+	{
+	   // error handling code
+	}
+	catch( ExceptionName eN )
+	{
+	   // error handling code
+	}
+	finally
+	{
+	   // clean up
+	}
+	```
+	All exceptions are classes derived from the System.Exception class and you can define your own subclasses of System.Exception.
+	C# also has the 'throw' statement which allows the programmer to choose to throw a specific type of exception. Example:
+	```
+	static int GetNumber(int index)
+        {
+            int[] nums = { 300, 600, 900 };
+            if (index > nums.Length)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return nums[index];
+
+        }
+	```
 * ## Lambda expressions, closures, or functions as types
 	### Python
 
 	### C#
 * ## Implementation of listeners and event handlers
 	### Python
-
+	Python does not have listeners or event handlers by default. It is up to the programmer to implement for themselves (using, for example, Observer patterns), or to import a library that will add the functionality.
 	### C#
+	C# has one of the richest event systems of any object oriented language. C# uses a system of events, listeners, delegates, and publish-subscribe patters to handle events and notifications. If you know anything about object oriented languages, events, listeners, and publish-subscribe are self-explanatory. Delegates, however, are a special feature of C#. Delegates provide a functionality similar to function pointers from C. They are an improved version, however, as they allow you to execute a list of multiple functions referenced by a single delegate with one line of code. Delegates are ideally suited for use as events — notifications from one component to "listeners" about changes in that component, so they are often used in conjunction with the wider event system.
+
+	A code snippet can provide the best explanation of the interactions of this complicated system.
+
+	In the below snippet, a Metronome class creates events at a rate of one every 3 seconds, and a Listener class hears the metronome ticks by 'Subscribing' to the delegate and prints "HEARD IT" to the console every time it receives an event.
+	```
+	using System;
+	namespace example
+	{
+	    public class Metronome
+	    {
+	        public event TickHandler Tick;
+	        public EventArgs e = null;
+	        public delegate void TickHandler(Metronome m, EventArgs e);
+	        public void Start()
+	        {
+	            while (true)
+	            {
+	                System.Threading.Thread.Sleep(3000);
+	                if (Tick != null)
+	                {
+	                    Tick(this, e);
+	                }
+	            }
+	        }
+	    }
+	        public class Listener
+	        {
+	            public void Subscribe(Metronome m)
+	            {
+	                m.Tick += new Metronome.TickHandler(HeardIt);
+	            }
+	            private void HeardIt(Metronome m, EventArgs e)
+	            {
+	                System.Console.WriteLine("HEARD IT");
+	            }
+
+	        }
+	    class Test
+	    {
+	        static void Main()
+	        {
+	            Metronome m = new Metronome();
+	            Listener l = new Listener();
+	            l.Subscribe(m);
+	            m.Start();
+	        }
+	    }
+	}
+	```
 * ## Singleton
 	### Python
+	There are multiple ways to implement a singleton in Python based on one of the following: tag it with a decorator, create it as a base class, use a metaclass, and more.
+
+	The following snippet is an example of singleton implementation using a decorator:
+	```
+	def singleton(class_):
+		instances = {}
+		def getinstance(*args, **kwargs):
+		if class_ not in instances:
+		instances[class_] = class_(*args, **kwargs)
+		return instances[class_]
+		return getinstance
+
+	@singleton
+	class MyClass(BaseClass):
+		pass
+	```
+	This method of creating a singleton using decorators can also be made thread-safe and lazily instantiable.
+
+	[See an example](/CodeSnippets/PythonSingleton.py) of a thread-safe, lazily instantiable singleton class.
 
 	### C#
-	* How is a singleton implemented?
-	* Can it be made thread-safe?
-	* Can the singleton instance be lazily instantiated?
+	In comparison to Python, C# supports singletons without having to jump through so many hoops thanks to enforced access levels.
+
+	The following code implements a singleton by using a private constructor that is thread-safe and can be lazily instantiated.
+	```
+	public sealed class Singleton
+	{
+	    private Singleton()
+	    {
+	    }
+
+	    public static Singleton Instance { get { return Nested.instance; } }
+
+	    private class Nested
+	    {
+	        // Explicit static constructor to tell C# compiler
+	        // not to mark type as beforefieldinit
+	        static Nested()
+	        {
+	        }
+
+	        internal static readonly Singleton instance = new Singleton();
+	    }
+	}
+	```
 * ## Procedural programming
 	### Python
-
+	https://blog.newrelic.com/2015/04/01/python-programming-styles/
 	### C#
 	* Does the language support procedural programming?
 * ## Functional programming
