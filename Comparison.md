@@ -55,7 +55,7 @@
 	In global scope: global spam
 	```
 	### C#
-	In C# namespaces are implemented by organizing code within C# assemblies, which act as a fundamental unit of physical code grouping for a program. In comparison to Python, C# namespaces require more explicitness to use them. For instance, the built-in C# namespace is not automatically imported into programs - it must be included with a 'Using System' command. In addition, you can explicitly define your own namespaces within a C# file using the 'namespace' command, and you can nest these as much as you want within a file. Like Python, namespace members are accessed using the '.' operator.
+	In C# namespaces are implemented by organizing code within C# assemblies, which act as a fundamental unit of physical code grouping for a program. In comparison to Python, C# namespaces are activated with the 'Using' keyword and require more explicitness to use them. For instance, the built-in C# namespace is not automatically imported into programs - it must be included with a 'Using System' command. In addition, you can explicitly define your own namespaces within a C# file using the 'namespace' command, and you can nest these as much as you want within a file. Like Python, namespace members are accessed using the '.' operator.
 	The following is a code snippet showing how C# namespaces can be nested together and how they are accessed:
 	```
 	namespace SampleNamespace
@@ -177,46 +177,256 @@
 
 	### C#
 	* this? self?
+
 * ## Properties
 	### Python
-
+	Because Python doesn't have access levels, the 'Pythonic Way' would be to not use getters or setters. When you want to access a class member, you simply use the '.' operator. You can, however, mimic getter and setter behavior in Python if you wish to for design purposes. The most popular approach is to use the @property decorator to wrap a function and then mimic getter or setter functionality within.
 	### C#
-	* Getters and setters...write your own or built in?
-	* Backing variables?
-	* Computed properties?
+	C# makes use of backing variables which actually store member values. Example:
+	```
+	public class MyClass{
+		private string name;
+		public string Name
+		{
+	    	get { return name; }
+	    	set { name = value; }
+		}
+	}
+	```
+	Now, if you do
+	```
+	MyClass.Name = "Bob";
+	```
+	"Bob" will be stored in the private string, name.
+
+	C# will automatically set backing variables if you use the automatic property functionality to create getters and setters for class members like so:
+	```
+	public class myClass{
+		public string Name {get; set;}
+	}
+	```
+	This is equivalent to declaring a private member 'name' with explicit getters and setters as shown in the first snippet.
+
 * ## Interfaces / protocols
 	### Python
+	In Python, interfaces are not strictly necessary as they are in a language like C# or Java because Python has multiple inheritance and ducktyping. However, later versions of Python introduced Abstract Base Classes which can stand in as an interface for design purposes, or you can implement pseudo interfaces by using NotImplementedError exception checks.
 
+	Here is an example of an Abstract Base Class acting as an interface:
+	```
+	from abc import ABCMeta, abstractmethod
+
+	class IInterface:
+	    __metaclass__ = ABCMeta
+
+	    @classmethod
+	    def version(self): return "1.0"
+	    @abstractmethod
+	    def show(self): raise NotImplementedError
+
+	class MyServer(IInterface):
+	    def show(self):
+	        print 'Hello, World 2!'
+
+	class MyBadServer(object):
+	    def show(self):
+	        print 'Damn you, world!'
+
+
+	class MyClient(object):
+
+	    def __init__(self, server):
+	        if not isinstance(server, IInterface): raise Exception('Bad interface')
+	        if not IInterface.version() == '1.0': raise Exception('Bad revision')
+
+	        self._server = server
+
+
+	    def client_show(self):
+	        self._server.show()
+
+
+	# This call will fail with an exception
+	try:
+	    x = MyClient(MyBadServer)
+	except Exception as exc:
+	    print 'Failed as it should!'
+
+	# This will pass with glory
+	MyClient(MyServer()).client_show()
+	```
 	### C#
-	* What does the language support?
-	* What abilities does it have?
-	* How is it used?
+	C# supports traditional Java-like interfaces which contain abstract methods that must be defined by any class the implements the interface. An interface is declared using the interface keyword like so:
+	```
+	interface IEquatable<T>
+    {
+        bool Equals(T obj);
+    }
+	```
+	And any class that implements the IEquatable interface must define the Equals function. C# interfaces allow classes to include behavior from multiple sources, which would not otherwise be possible because C# only supports single class inheritance.
+
+	C# Interfaces can contain methods, properties, events, indexers, or any combination of those four member types. An interface can't contain constants, fields, operators, instance constructors, destructors, or types. Interface members are automatically public, and they can't include any access modifiers. Members also can't be static.
+
+	C# interfaces are like abstract classes: any class that implements an interface must implement all of its members and interfaces cannot be instantiated directly.
+
+	[Example of the implementation of the IEquatable interface from above.](/CodeSnippets/CSharpInterfaceExample.cs).
 * ## Inheritance / extension
 	### Python
+	Python supports single and multiple inheritance. Single inheritance looks like this:
+	```
+	class DerivedClassName(BaseClassName):
+	    <statement-1>
+	    .
+	    .
+	    <statement-N>
+	```
+	and multiple inheritance looks like this:
+	```
+	class DerivedClassName(Base1, Base2, Base3):
+	    <statement-1>
+	    .
+	    .
+	    <statement-N>
+	```
 
 	### C#
-	* Reflection
-	* What reflection abilities are supported?
-	* How is reflection used?
+	C# allows only single inheritance. In code, it looks like this:
+	```
+	public class DerivedClassName : BaseClassName
+	{
+		<statement-1>
+		.
+		.
+		<statement-N>
+	}
+	```
+* ## Reflection
+	### Python
+	Python supports the notion of reflection in some ways, but with some important differences. First, Python calls it introspection rather than reflection. Secondly, Python is a dynamically typed language, so some of the concepts of reflection do not translate well or simply do not make sense in that context. For example, finding the type of an object of unknown type so you can create another instance of that object at runtime makes no sense in this context because you do not need that information in a dynamically typed language. That said, Python does support reflection-like abilities via introspection and allows you to find names, types, identity numbers (to see if an object is unique), attributes, callables (methods), and whether or not an object is a subclass.
+	Here is an example of these methods in action inside a function named interrogate that takes any object and prints the information provided by introspection:
+	```
+	def interrogate(item):
+		"""Print useful information about item."""
+		if hasattr(item, '__name__'):
+		 print "NAME:    ", item.__name__
+		if hasattr(item, '__class__'):
+		 print "CLASS:   ", item.__class__.__name__
+		print "ID:      ", id(item)
+		print "TYPE:    ", type(item)
+		print "VALUE:   ", repr(item)
+		print "CALLABLE:",
+		if callable(item):
+		 print "Yes"
+		else:
+		 print "No"
+		if hasattr(item, '__doc__'):
+		 doc = getattr(item, '__doc__')
+		doc = doc.strip()   # Remove leading/trailing whitespace.
+		firstline = doc.split('\n')[0]
+		print "DOC:     ", firstline
+
+	interrogate('a string')     # String object
+	```
+	Output:
+	```
+	CLASS:    str
+	ID:       141462040
+	TYPE:     <type 'str'>
+	VALUE:    'a string'
+	CALLABLE: No
+	DOC:      str(object) -> string
+	```
+	### C#
+	C# supports reflection with the System.Reflection namespace which can provide a view of loaded types, methods, and fields, with the ability to dynamically create and invoke types. The following sample code shows how reflection is implemented in C#:
+	```
+	using System;
+	using System.Reflection;
+
+	public class MyClass
+	{
+	   public virtual int AddNumb(int numb1,int numb2)
+	   {
+	     int result = numb1 + numb2;
+	     return result;
+	   }
+
+	}
+
+	class MyMainClass
+	{
+	  public static int Main()
+	  {
+	    Console.WriteLine ("\nReflection.MethodInfo");
+	    // Create MyClass object
+	    MyClass myClassObj = new MyClass();
+	    // Get the Type information.
+	    Type myTypeObj = myClassObj.GetType();
+	    // Get Method Information.
+	    MethodInfo myMethodInfo = myTypeObj.GetMethod("AddNumb");
+	    object[] mParam = new object[] {5, 10};
+	    // Get and display the Invoke method.
+	    Console.Write("\nFirst method - " + myTypeObj.FullName + " returns " +  
+	                         myMethodInfo.Invoke(myClassObj, mParam) + "\n");
+	    return 0;
+	  }
+	}
+	```
 * ## Memory management
 	### Python
-
+	Memory management in Python varies slightly based on which implementation we are talking about. There are many under-the-hood implementations of Python such as CPython, Jython, PyPy, etc. The reference implementation, CPython, automatically manages memory within a private heap containing all Python objects and data structures. The Python memory manager manages this private heap, with different modules of the manager handling different types. Memory is allocated for an integer in a different way than for a string, for example, to maximize performance and memory usage. Python uses automatic garbage collection which tracks object references and automatically garbage collects items when there are no more references to it. The programmer cannot directly free memory allocated to an object, but can force an object to be garbage collected by deleting all references to it and then forcing the garbage collector to run. Example:
+	```
+	import gc			#import the garbage collector so we can explicitly call it
+	object = MyClass()	#instantiate
+	del object			#delete references to force collection
+	gc.collect() 		#force garbage collection
+	```
 	### C#
-	* How is it handled?
-	* How does it work?
-	* Garbage collection?
-	* Automatic reference counting?
+	C# memory is handled on a managed heap. C# does automatic memory management which is implemented via garbage collection. When the C# garbage collector starts to run, it makes the assumption that all objects in the C# heap are garbage then starts walking the roots and building a graph of objects that are reachable. Any object that doesn't show up in one of the root graphs is considered to be garbage. So, if an object is no longer accessible other than by its destructor, that object becomes eligible for destruction. Once an object becomes eligible, at some unspecified time later, its destructor will be called and the item will become eligible for garbage collection. After that, again at some unspecified future point, the destructed object is garbage collected. There is no predictable order in which eligible objects are collected. Similar to CPython, the programmer cannot directly free an object from memory, but can request that garbage collection occur using static methods imported from System.GC.
+
 * ## Comparisons of references and values
 	### Python
-
+	In Python variables are compared by value using the typical '==' operator. You can compare variables by reference using the 'is' command. Example:
+	```
+	x = 1.2
+	y = 1.2
+	x is y	# this compares by reference and returns false because they have different IDs
+	x == y	# this returns true
+	```
+	Note: for some variables such as integers from -5 to 256 and strings, Python will automatically make duplicate variables point to the same object for performance optimization which in that case renders the 'is' command obsolete. This is known as 'interning.'
 	### C#
-	* How are values compared? (i.e. comparing two strings)
+	C# makes use of the ReferenceEquals() function to see if 2 objects refer to the same instance. In other words, this compares the object references for equality to see if they point to the same object in memory.
+
+	Value equality is checked with the usual '==' notation.
+
+	Strings are properly compared using
+	```
+	String.Compare(string1, string2);
+	```
+	It's also worth noting that strings are interned in C# just as they are in Python - trying to compare two different copies of the same string will return the same reference value.
 * ## Null/nil references
 	### Python
+	Python uses 'None' for null/nil values. The only notable thing about handling null references in Python is that, since 'None' is actually an instantiated singleton object in Python, you can compare values to None in two ways:
+	```
+	if value == None:	# traditional way
+		do stuff
 
+	if value is None:	# Pythonic way
+		do stuff
+	```
+	There is no null pointer exception in Python; instead when an unexpected null is encountered, a TypeError or ValueError will be raised and must be handled.
 	### C#
-	* Which does the language use? (null/nil/etc)
-	* Does the language have features for handling null/nil references?
+	C# uses the 'null' keyword. In the newest version of C#, there is the typical way for checking if an object is null and there is a new feature known as monadic null checking. Here is what they look like in comparison:
+	```
+	// Old way
+	if (points != null) {
+	    var next = points.FirstOrDefault();
+	    if (next != null && next.X != null) return next.X;
+	}   
+	return -1;
+
+	// New way with monadic null checking
+	var bestValue = points?.FirstOrDefault()?.X ?? -1;
+	```
+	This new '?.' syntactic sugar allows for more efficient null checking before accessing properties or methods.
 * ## Errors and exception handling
 	### Python
 
