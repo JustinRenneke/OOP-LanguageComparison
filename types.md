@@ -1,0 +1,5 @@
+## Types
+### Python
+The type system in Python uses implicit typing with dynamic type checking. This means you don't have to declare a type when declaring a variable. Python supports the following types: booleans, integers, longs, floats, complex numbers, strings, bytes, byte arrays, lists, tuples, sets, frozen sets, and dictionaries. All types are Python are reference types, the major difference between types is whether or not they are mutable. In Python, the numeric types, strings, tuples, and frozen sets are immutable. You can also create new value types that you define yourself.
+### C#
+C# is a statically typed, strongly-typed language like C where all variables must be of a declared type. C# supports the following built-in data types: boolean, byte, signed byte, character, decimal, double, float, integer, unsigned integer, long, unsigned long, object, short, unsigned short, and string. Again, as in C, both reference types and value types are supported with most of the built-in data types listed above being treated as value types. You can create new value types in C#, but they have some constraints as they are based on a C# object - ValueType.

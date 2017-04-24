@@ -9,7 +9,7 @@
 * ### [Name spaces](name_spaces.md)
 * ### [Types](types.md)
 * ### [Classes](classes.md)
- * #### [Instance reference name in data type (class)](instance_reference.md)
+  * #### [Instance reference name in data type (class)](instance_reference.md)
 * ### [Properties](properties.md)
 * ### [Interfaces / protocols](interfaces.md)
 * ### [Inheritance / extension](extension.md)

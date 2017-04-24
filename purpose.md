@@ -1,0 +1,5 @@
+## Language purpose/genesis  
+### Python
+Python was created by Guido van Rossum in 1991. Its purpose was to introduce a syntax that would emphasize code readability by using whitespace indentation instead of curly braces or keywords, as well as simplify and speed up development over the other languages that were available at the time such as C++ and Java.
+### C#
+C# was created by a team at Microsoft and first released in 2000. C# was created because Microsoft needed an object oriented programming language to support the .NET framework they were developing in the late 1990s. Microsoft was initially using Java, but Sun wouldn't allow Microsoft to make the changes it needed, so Microsoft created C# so they could have full control of the language. In the early years of C# the language was very similar to Java and received much criticism for being a copy cat, but as time went on Java and C# began to diverge as they implemented different features in different ways.
