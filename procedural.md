@@ -15,7 +15,6 @@ anotherNumber = anotherMethod(someNumber)
 //etc
 ```
 ### C#
-* Does the language support procedural programming?
 
 As a language designed primarily around the Object Oriented paradigm, C# design philosophy has very little support for procedural programming style. While looking for examples of "good" procedural programming in C#, all I found was examples of how to "fix" procedural programming in C#. The most straightforward way to write a procedural program in C# would be to start in the main method, instantiating variables and making method calls from there.
 
